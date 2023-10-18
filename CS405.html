@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        rect {
+            fill: blue;
+        }
+        text {
+            font-size: 12px;
+            text-anchor: middle;
+            alignment-baseline: middle; 
+        }
+        line {
+            stroke: gray;
+            stroke-width: 1;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Number of total suicides per age group</th>
+        </tr>
+        
+    </table>
+
+    <svg width="800" height="400">
+
+    </svg>
+
+    <script>
+        const data = [
+            { label: "<15", value: 81 },
+            { label: "15-19", value: 410 },
+            { label: "20-24", value: 544 },
+            { label: "25-29", value: 568 },
+            { label: "30-34", value: 460 },
+            { label: "35-39", value: 398 },
+            { label: "40-44", value: 373 },
+            { label: "45-49", value: 265 },
+            { label: "50-54", value: 241 },
+            { label: "55-59", value: 201 },
+            { label: "60-64", value: 176 },
+            { label: "65-69", value: 145 },
+            { label: "70-74", value: 111 },
+            { label: "75+", value: 173 }
+        ];
+
+        const svg = document.querySelector("svg");
+
+        const chartWidth = 800;
+        const chartHeight = 300;
+        const maxTotal = Math.max(...data.map(d => d.value));
+        const numBars = data.length;
+        const spaceBetweenBars = 10;
+        const barWidth = (chartWidth - (spaceBetweenBars * (numBars - 1))) / numBars;
+
+        // Lines
+        const yAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        yAxis.setAttribute("x1", 70);
+        yAxis.setAttribute("y1", 0);
+        yAxis.setAttribute("x2", 70);
+        yAxis.setAttribute("y2", chartHeight);
+        svg.appendChild(yAxis);
+
+        data.forEach((d, i) => {
+            const x = i * (barWidth + spaceBetweenBars) + 70;
+            const barHeight = (d.value / maxTotal) * chartHeight;
+            const barWidthAdjusted = i === numBars - 1 ? barWidth + spaceBetweenBars : barWidth;
+
+            // Boxes
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", x);
+            rect.setAttribute("y", chartHeight - barHeight);
+            rect.setAttribute("width", barWidthAdjusted);
+            rect.setAttribute("height", barHeight);
+            rect.style.fill = "blue";
+
+            svg.appendChild(rect);
+
+            // Box text
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", x + barWidthAdjusted / 3);
+            text.setAttribute("y", chartHeight + 20); 
+            text.textContent = d.label;
+
+            svg.appendChild(text);
+
+            // Box value
+            const valueText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            valueText.setAttribute("x", x + barWidthAdjusted / 2);
+            valueText.setAttribute("y", chartHeight - barHeight / 2);
+            valueText.textContent = d.value;
+            valueText.style.fill = "white";
+
+            svg.appendChild(valueText);
+
+            if (i < numBars - 1) {
+                const smallLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                smallLine.setAttribute("x1", x + barWidthAdjusted + spaceBetweenBars / 2);
+                smallLine.setAttribute("y1", chartHeight);
+                smallLine.setAttribute("x2", x + barWidthAdjusted + spaceBetweenBars / 2);
+                smallLine.setAttribute("y2", chartHeight + 10);
+                smallLine.style.stroke = "gray";
+                smallLine.style.strokeWidth = 1;
+                svg.appendChild(smallLine);
+            }
+        });
+
+        const xAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        xAxis.setAttribute("x1", 70);
+        xAxis.setAttribute("y1", chartHeight);
+        xAxis.setAttribute("x2", chartWidth);
+        xAxis.setAttribute("y2", chartHeight);
+        xAxis.style.stroke = "gray";
+        xAxis.style.strokeWidth = 1;
+        svg.appendChild(xAxis);
+    </script>
+</body>
